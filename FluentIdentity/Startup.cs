@@ -13,6 +13,9 @@ using Microsoft.EntityFrameworkCore;
 using FluentIdentity.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using FluentIdentity.Data.Core;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FluentIdentity
 {
@@ -42,6 +45,31 @@ namespace FluentIdentity
 				.AddDefaultUI(UIFramework.Bootstrap4)
 				.AddEntityFrameworkStores<ApplicationDbContext>();
 
+			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
+				AddJwtBearer(options => 
+				{
+					options.RequireHttpsMetadata = false;
+					options.TokenValidationParameters = new TokenValidationParameters
+					{
+						// укзывает, будет ли валидироваться издатель при валидации токена
+						ValidateIssuer = true,
+						// строка, представляющая издателя
+						ValidIssuer = AuthOptions.ISSUER,
+
+						// будет ли валидироваться потребитель токена
+						ValidateAudience = true,
+						// установка потребителя токена
+						ValidAudience = AuthOptions.AUDIENCE,
+						// будет ли валидироваться время существования
+						ValidateLifetime = true,
+
+						// установка ключа безопасности
+						IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+						// валидация ключа безопасности
+						ValidateIssuerSigningKey = true,
+					};
+				});
+
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 		}
 
@@ -51,7 +79,7 @@ namespace FluentIdentity
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
-				app.UseDatabaseErrorPage();
+				//app.UseDatabaseErrorPage();
 			}
 			else
 			{
@@ -62,8 +90,7 @@ namespace FluentIdentity
 
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
-			app.UseCookiePolicy();
-
+			//app.UseCookiePolicy();
 			app.UseAuthentication();
 
 			app.UseMvc(routes =>

@@ -2,7 +2,7 @@
 
 namespace FluentIdentity.Data.Tables
 {
-	public class IdentityRoleTable
+	public class IdentityRolesTable
 	{
 		public virtual string Id { get; set; }
 

@@ -11,7 +11,7 @@ namespace FluentIdentity.Data.TableMapping
 	{
 		public IdentityUsersMap()
 		{
-			Id(x => x.Id).GeneratedBy.Guid();
+			Id(x => x.Id).GeneratedBy.Custom<CustomIdentityGenerator>(p => p.AddParam("Id", Guid.NewGuid().ToString()));
 			Map(x => x.UserName).Length(256).Nullable();
 			Map(x => x.NormalizedUserName).Length(256).Index("UserNameIndex").Nullable();
 			Map(x => x.Email).Length(256).Nullable();

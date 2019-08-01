@@ -1,9 +1,5 @@
 ﻿using FluentIdentity.Data.Tables;
 using FluentNHibernate.Mapping;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FluentIdentity.Data.TableMapping
 {
@@ -15,6 +11,10 @@ namespace FluentIdentity.Data.TableMapping
 			Map(x => x.LoginProvider).Length(128);
 			Map(x => x.Name).Length(128);
 			Map(x => x.Value).Nullable();
+			CompositeId()
+				.KeyProperty(x => x.UserId)
+				.KeyProperty(x => x.LoginProvider)
+				.KeyProperty(x => x.Name);
 		}
 	}
 }
